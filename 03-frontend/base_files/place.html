@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Details</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <img src="logo.png" class="logo" alt="Logo">
+            <a href="login.html" class="login-button">Login</a>
+        </nav>
+    </header>
+    <main>
+        <section id="place-details">
+            <!-- Place details will be populated dynamically -->
+             <h1>Beautiful Beach House</h1>
+             <div class="place-card">
+                <p>Host: John Doe</p>
+                <p>Price per night: $150</p>
+                <p>Location: Los Angeles, United States</p>
+                <p>Description: A beautiful beach house with amazing views...</p>
+                <p>Amenities: Wifi, Pool, Air Conditioning</p>
+             </div>
+        </section>
+        <section id="reviews">
+            <h2>Reviews</h2>
+            <!-- Reviews will be populated dynamically -->
+            <div class="review-card">
+               <h3>Jane Smith:</h3> 
+               <p>Great place to stay!</p>
+               <p>Rating: *****</p>
+            </div> 
+            <div class="review-card">
+                <h3>Robert Brown:</h3> 
+                <p>Amazing location and very comfortable</p>
+                <p>Rating: *****</p>
+             </div>             
+        </section>
+        <section id="add-review">
+            <!-- review-button enable if user is not connected: -->
+            <button id="review-button">Add review</button>
+            <!-- review-form disable if user is not connected: -->
+            <form id="review-form">
+                <h2>Add a Review</h2>
+                <label for="review-text">Review:</label>
+                <textarea id="review-text" name="review-text" required></textarea>
+                <button type="submit">Submit</button>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; HBNB Evolution. All rights reserved.</p>
+    </footer>
+    <script src="scripts.js"></script>
+</body>
+</html>

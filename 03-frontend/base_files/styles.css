@@ -1,0 +1,115 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+header, footer {
+    background-color: #ff9800;
+    color: #fff;
+    text-align: center;
+    padding: 10px 0;
+}
+
+nav {
+    display: flex; /* Use flexbox layout */
+    justify-content: space-between; /* Space out items to the edges */
+    align-items: center; /* Center align items vertically */
+    padding: 0 20px; /* Add horizontal padding */
+}
+
+header .logo {
+    height: 50px;
+}
+
+header .login-button {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 20px;
+}
+
+footer p {
+    margin: 0;
+}
+
+main {
+    padding: 20px;
+}
+
+/* Filter section styles */
+#filter {
+    display: flex; /* Use flexbox layout */
+    align-items: center; /* Center align items vertically */
+    justify-content: center; /* Center the entire filter section horizontally */
+    margin-bottom: 20px; /* Space below the filter section */
+}
+
+#filter label, #filter select {
+    margin: 0 10px; /* Space around label and select */
+}
+
+.place-card, .review-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin: 20px;
+    padding: 10px;
+    background-color: #fff;
+    flex: 0 1 calc(33.333% - 40px); /* Flex properties for responsive layout */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.place-card {
+    text-align: center;
+}
+
+.review-card {
+    text-align: left;
+}
+
+.place-card img, .review-card img {
+    max-width: 100%;
+    border-radius: 10px;
+}
+
+.details-button, .add-review {
+    background-color: #ff9800;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+form label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+form input, form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+form button {
+    background-color: #ff9800;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Flexbox container for place cards */
+#places-list {
+    display: flex; /* Use flexbox layout */
+    flex-wrap: wrap; /* Allow elements to wrap to the next line */
+    justify-content: space-around; /* Distribute space around items */
+}
+
+h1 {
+    text-align: center;
+}
