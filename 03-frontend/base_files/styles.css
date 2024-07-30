@@ -72,7 +72,7 @@ main {
     border-radius: 10px;
 }
 
-.details-button, .add-review {
+.details-button, .add-review, #review-button {
     background-color: #ff9800;
     color: #fff;
     border: none;
