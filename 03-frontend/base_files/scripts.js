@@ -95,12 +95,14 @@ async function fetchPlaceDetails(token, placeId) {
 }
 
 function displayPlaceDetails(place) {
-    const placeDetails = document.getElementById('place-details');
-    if (placeDetails) {
-        placeDetails.innerHTML = ''; // Clear existing content
-        const placeElement = document.createElement('div');
-        placeElement.className = 'place-details';
-        placeElement.innerHTML = `
+    const placeDetailsSection = document.getElementById('place-details');
+    const reviewsSection = document.getElementById('reviews'); // Get the reviews section
+
+    if (placeDetailsSection) {
+        placeDetailsSection.innerHTML = ''; // Clear existing content
+        const placeCard = document.createElement('div');
+        placeCard.className = 'place-card'; // Add class for styling
+        placeCard.innerHTML = `
             <h2>${place.host_name} - ${place.city_name}, ${place.country_name}</h2>
             <p>${place.description}</p>
             <p><strong>Location:</strong> ${place.city_name}, ${place.country_name}</p>
@@ -109,9 +111,38 @@ function displayPlaceDetails(place) {
                 ${place.images ? place.images.map(img => `<img src="${img}" alt="Place image">`).join('') : ''}
             </div>
         `;
-        placeDetails.appendChild(placeElement);
+        placeDetailsSection.appendChild(placeCard);
+    }
+
+    if (reviewsSection) {
+        reviewsSection.innerHTML = ''; // Clear existing content in the reviews section
+
+        if (place.reviews && place.reviews.length > 0) {
+            const reviewsTitle = document.createElement('h2');
+            reviewsTitle.textContent = 'Reviews';
+            reviewsSection.appendChild(reviewsTitle);
+
+            place.reviews.forEach(review => {
+                const reviewCard = document.createElement('div');
+                reviewCard.classList.add('review-card');
+
+                reviewCard.innerHTML = `
+                    <p><strong>${review.user_name}</strong></p>
+                    <p>Rating: ${review.rating} / 5</p>
+                    <p>${review.comment}</p>
+                `;
+
+                reviewsSection.appendChild(reviewCard);
+            });
+        } else {
+            const noReviewsMessage = document.createElement('p');
+            noReviewsMessage.textContent = 'No reviews yet.';
+            reviewsSection.appendChild(noReviewsMessage);
+        }
     }
 }
+
+
 
 function getCookie(name) {
     const value = `; ${document.cookie}`;
@@ -155,6 +186,7 @@ function displayPlaces(places) {
                 <p><strong>Price:</strong> $${place.price_per_night} per night</p>
                 <button class="details-button" data-id="${place.id}">View Details</button>
             `;
+
             placesList.appendChild(placeElement);
         });
 
