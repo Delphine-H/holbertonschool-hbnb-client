@@ -55,14 +55,21 @@ function checkAuthentication(token = null) {
         token = getCookie('token');
     }
     const addReviewSection = document.getElementById('add-review');
+    const reviewButton = document.getElementById('review-button');
     const loginButton = document.getElementById('login-button');
 
     if (!token) {
         if (loginButton) loginButton.style.display = 'block';
-        if (addReviewSection) addReviewSection.style.display = 'none';
+        if (addReviewSection) {
+            addReviewSection.style.display = 'none';
+            if (reviewButton) reviewButton.style.display = 'block'; // Show button if not authenticated
+        }
     } else {
         if (loginButton) loginButton.style.display = 'none';
-        if (addReviewSection) addReviewSection.style.display = 'block';
+        if (addReviewSection) {
+            addReviewSection.style.display = 'block'; // Show section if authenticated
+            if (reviewButton) reviewButton.style.display = 'none'; // Hide button if authenticated
+        }
     }
 }
 
