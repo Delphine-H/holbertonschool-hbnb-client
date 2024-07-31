@@ -102,5 +102,10 @@ def add_review(place_id):
     new_reviews.append(new_review)
     return jsonify({"msg": "Review added"}), 201
 
+@app.route('/countries', methods=['GET'])
+def get_countries():
+    countries = list({place['country_name'] for place in places})
+    return jsonify(countries)
+
 if __name__ == '__main__':
     app.run(debug=True)
