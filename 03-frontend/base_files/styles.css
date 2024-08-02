@@ -113,3 +113,25 @@ form button {
 h1 {
     text-align: center;
 }
+.amenities {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.amenities table {
+    width: 60%; /* Ajustez ce pourcentage selon vos besoins */
+    border-collapse: collapse;
+    margin: 0 auto; /* Centrer le tableau */
+}
+
+.amenities td {
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.amenities img {
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
+}

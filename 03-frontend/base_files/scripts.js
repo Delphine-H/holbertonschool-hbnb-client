@@ -45,6 +45,22 @@ function handleLoginForm() {
     }
 }
 
+async function loginUser(email, password) {
+    try {
+        const response = await fetch('http://127.0.0.1:5000/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password })
+        });
+        return response;
+    } catch (error) {
+        console.error('Error logging in:', error);
+        throw error;
+    }
+}
+
 function getPlaceIdFromURL() {
     const params = new URLSearchParams(window.location.search);
     return params.get('place_id');
@@ -110,6 +126,62 @@ function displayPlaceDetails(place) {
             <div class="images">
                 ${place.images ? place.images.map(img => `<img src="${img}" alt="Place image">`).join('') : ''}
             </div>
+            <div class="amenities">
+                <table>
+                    <tr>
+                        <td><img src="icon_bed.png" alt="Number of rooms"></td>
+                        <td>${place.number_of_rooms} rooms</td>
+                    </tr>
+                    <tr>
+                        <td><img src="icons/icon_guests.png" alt="Max guests"></td>
+                        <td>Maximum ${place.max_guests} guests</td>
+                    </tr>
+                    <tr>
+                        <td><img src="icon_bath.png" alt="Number of bathrooms"></td>
+                        <td>${place.number_of_bathrooms} bathrooms</td>
+                    </tr>
+                    ${place.amenities.includes('WiFi') ? `
+                    <tr>
+                        <td><img src="icon_wifi.png" alt="WiFi"></td>
+                        <td>Available</td>
+                    </tr>` : ''}
+                    ${place.amenities.includes('Pool') ? `
+                    <tr>
+                        <td><img src="icon_pool.png" alt="Pool"></td>
+                        <td>Available</td>
+                    </tr>` : ''}
+                    ${place.amenities.includes('Fireplace') ? `
+                    <tr>
+                        <td><img src="icon_fireplace.png" alt="Fireplace"></td>
+                        <td>Available</td>
+                    </tr>` : ''}
+                    ${place.amenities.includes('Gym') ? `
+                    <tr>
+                        <td><img src="icon_gym.png" alt="Gym"></td>
+                        <td>Available</td>
+                    </tr>` : ''}
+                    ${place.amenities.includes('Beach Access') ? `
+                    <tr>
+                        <td><img src="icon_beach_access.png" alt="Beach Access"></td>
+                        <td>Available</td>
+                    </tr>` : ''}
+                    ${place.amenities.includes('Breakfast') ? `
+                    <tr>
+                        <td><img src="icon_breakfast.png" alt="Breakfast"></td>
+                        <td>Available</td>
+                    </tr>` : ''}
+                    ${place.amenities.includes('Air Conditioning') ? `
+                    <tr>
+                        <td><img src="icon_ac.png" alt="Air Conditioning"></td>
+                        <td>Available</td>
+                    </tr>` : ''}
+                    ${place.amenities.includes('Sauna') ? `
+                    <tr>
+                        <td><img src="icon_sauna.png" alt="Sauna"></td>
+                        <td>Available</td>
+                    </tr>` : ''}
+                </table>
+            </div>
         `;
         placeDetailsSection.appendChild(placeCard);
     }
@@ -141,7 +213,6 @@ function displayPlaceDetails(place) {
         }
     }
 }
-
 
 
 function getCookie(name) {
@@ -223,9 +294,9 @@ async function populateCountryFilter() {
                 });
 
                 // Add event listener for filtering places
-                countryFilter.addEventListener('change', (event) => {
-                    const selectedCountry = event.target.value;
-                    filterPlacesByCountry(selectedCountry);
+                countryFilter.addEventListener('change', function() {
+                    const selectedCountry = countryFilter.value;
+                    fetchPlacesByCountry(selectedCountry);
                 });
             }
         } else {
@@ -236,28 +307,22 @@ async function populateCountryFilter() {
     }
 }
 
-function filterPlacesByCountry(country) {
-    const placesList = document.getElementById('places-list');
-    if (placesList) {
-        const places = placesList.getElementsByClassName('place-card');
-        Array.from(places).forEach(place => {
-            const placeCountry = place.querySelector('h3').textContent.split(', ').pop();
-            if (country === 'All' || placeCountry === country) {
-                place.style.display = 'block';
-            } else {
-                place.style.display = 'none';
+async function fetchPlacesByCountry(country) {
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/places?country=${country}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
             }
         });
-    }
-}
 
-async function loginUser(email, password) {
-    const response = await fetch('http://127.0.0.1:5000/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password })
-    });
-    return response;
+        if (response.ok) {
+            const places = await response.json();
+            displayPlaces(places);
+        } else {
+            console.error('Failed to fetch places by country:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error fetching places by country:', error);
+    }
 }
