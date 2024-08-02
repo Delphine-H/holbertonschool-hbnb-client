@@ -28,7 +28,7 @@ To set up the project locally:
 2. Open the project in your preferred code editor.
 
 3. Ensure the backend server is running and accessible:
-```bash
+    ```bash
     cd 03-frontend
     cd mock-api
     python3 app.py
