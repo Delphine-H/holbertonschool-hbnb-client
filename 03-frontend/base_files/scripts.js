@@ -74,21 +74,25 @@ function checkAuthentication(token = null) {
     const addReviewSection = document.getElementById('add-review');
     const reviewButton = document.getElementById('review-button');
     const loginButton = document.getElementById('login-button');
+    const logoutButton = document.getElementById('logout-button');
 
     if (!token) {
         if (loginButton) loginButton.style.display = 'block';
+        if (logoutButton) logoutButton.style.display = 'none';
         if (addReviewSection) {
             addReviewSection.style.display = 'none';
             if (reviewButton) reviewButton.style.display = 'block'; // Show button if not authenticated
         }
     } else {
         if (loginButton) loginButton.style.display = 'none';
+        if (logoutButton) logoutButton.style.display = 'block';
         if (addReviewSection) {
             addReviewSection.style.display = 'block'; // Show section if authenticated
             if (reviewButton) reviewButton.style.display = 'none'; // Hide button if authenticated
         }
     }
 }
+
 
 async function fetchPlaceDetails(token, placeId) {
     try {
@@ -372,4 +376,9 @@ async function addReview(token, placeId, rating, review) { // Changed 'comment' 
         console.error('Error adding review:', error);
         throw error;
     }
+}
+
+function handleLogout() {
+    document.cookie = 'token=; path=/; SameSite=None; Secure; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    window.location.href = 'index.html'; // Rediriger vers la page d'accueil après la déconnexion
 }

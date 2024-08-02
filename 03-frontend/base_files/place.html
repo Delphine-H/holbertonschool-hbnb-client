@@ -11,6 +11,7 @@
         <nav>
             <a href="index.html"><img src="logo.png" class="logo" alt="Logo"></a>
             <a href="login.html" id="login-button">Login</a>
+            <a id="logout-button" href="#" style="display: none;" onclick="handleLogout()">Logout</a>
         </nav>
     </header>
     <main>
@@ -47,6 +48,7 @@
                 <h2>Add a Review</h2>
                 <label for="review-text">Review:</label>
                 <textarea id="review-text" name="review-text" required></textarea>
+                <label for="rating">Rating:</label>
                 <select id="rating" name="rating" required>
                     <option value="1">1 Star</option>
                     <option value="2">2 Stars</option>
