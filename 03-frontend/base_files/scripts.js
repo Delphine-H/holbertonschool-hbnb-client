@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const token = getCookie('token');
-
+    
     if (document.getElementById('places-list')) {
         // Page with list of places
         checkAuthentication(token);
@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function handleLoginForm() {
-    // Handle login form submission
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
         loginForm.addEventListener('submit', async (event) => {
@@ -33,7 +32,10 @@ function handleLoginForm() {
                 if (response.ok) {
                     const data = await response.json();
                     document.cookie = `token=${data.access_token}; path=/; SameSite=None; Secure`;
-                    window.location.href = 'index.html'; // Redirect to index page
+
+                    const redirectUrl = getCookie('redirectUrl') || 'index.html';
+                    document.cookie = 'redirectUrl=; path=/; SameSite=None; Secure; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                    window.location.href = redirectUrl;
                 } else {
                     const errorData = await response.json();
                     alert('Login failed: ' + (errorData.msg || response.statusText));
@@ -71,7 +73,7 @@ function checkAuthentication(token = null) {
     if (!token) {
         token = getCookie('token');
     }
-    const addReviewSection = document.getElementById('add-review');
+    const addReviewSection = document.getElementById('form');
     const reviewButton = document.getElementById('review-button');
     const loginButton = document.getElementById('login-button');
     const logoutButton = document.getElementById('logout-button');
@@ -79,20 +81,24 @@ function checkAuthentication(token = null) {
     if (!token) {
         if (loginButton) loginButton.style.display = 'block';
         if (logoutButton) logoutButton.style.display = 'none';
-        if (addReviewSection) {
-            addReviewSection.style.display = 'none';
-            if (reviewButton) reviewButton.style.display = 'block'; // Show button if not authenticated
+        if (reviewButton) {
+            reviewButton.style.display = 'block';
+            reviewButton.addEventListener('click', () => {
+                // Store the current place URL in a cookie to redirect after login
+                document.cookie = `redirectUrl=${window.location.href}; path=/; SameSite=None; Secure`;
+                window.location.href = 'login.html'; // Redirect to login page
+            });
         }
+        if (addReviewSection) addReviewSection.style.display = 'none';
     } else {
         if (loginButton) loginButton.style.display = 'none';
         if (logoutButton) logoutButton.style.display = 'block';
         if (addReviewSection) {
-            addReviewSection.style.display = 'block'; // Show section if authenticated
-            if (reviewButton) reviewButton.style.display = 'none'; // Hide button if authenticated
+            addReviewSection.style.display = 'block';
+            if (reviewButton) reviewButton.style.display = 'none';
         }
     }
 }
-
 
 async function fetchPlaceDetails(token, placeId) {
     try {
@@ -117,13 +123,13 @@ async function fetchPlaceDetails(token, placeId) {
 
 function displayPlaceDetails(place) {
     const placeDetailsSection = document.getElementById('place-details');
-    const reviewsSection = document.getElementById('reviews'); // Get the reviews section
+    const reviewsSection = document.getElementById('reviews');
 
     if (placeDetailsSection) {
-        placeDetailsSection.innerHTML = ''; // Clear existing content
+        placeDetailsSection.innerHTML = '';
         const placeCard = document.createElement('div');
-        placeCard.className = 'place-card'; // Add class for styling
-        const placeImage = `images/${place.id}.jpeg`; // Path to the image
+        placeCard.className = 'place-card';
+        const placeImage = `images/${place.id}.jpeg`;
         placeCard.innerHTML = `
             <h2>${place.host_name} - ${place.city_name}, ${place.country_name}</h2>
             <p>${place.description}</p>
@@ -193,7 +199,7 @@ function displayPlaceDetails(place) {
     }
 
     if (reviewsSection) {
-        reviewsSection.innerHTML = ''; // Clear existing content in the reviews section
+        reviewsSection.innerHTML = '';
 
         if (place.reviews && place.reviews.length > 0) {
             const reviewsTitle = document.createElement('h2');
@@ -251,12 +257,12 @@ async function fetchPlaces(token) {
 function displayPlaces(places) {
     const placesList = document.getElementById('places-list');
     if (placesList) {
-        placesList.innerHTML = ''; // Clear existing content
+        placesList.innerHTML = '';
 
         places.forEach(place => {
             const placeElement = document.createElement('div');
             placeElement.className = 'place-card';
-            const placeImage = `images/${place.id}.jpeg`; // Path to the image
+            const placeImage = `images/${place.id}.jpeg`;
             placeElement.innerHTML = `
                 <h3>${place.host_name} - ${place.city_name}, ${place.country_name}</h3>
                 <img src="${placeImage}" alt="Place image">
@@ -268,7 +274,6 @@ function displayPlaces(places) {
             placesList.appendChild(placeElement);
         });
 
-        // Add event listener to all "View Details" buttons
         document.querySelectorAll('.details-button').forEach(button => {
             button.addEventListener('click', function() {
                 const placeId = this.getAttribute('data-id');
@@ -286,13 +291,11 @@ async function populateCountryFilter() {
             const countryFilter = document.getElementById('country-filter');
             
             if (countryFilter) {
-                // Add default option
                 const defaultOption = document.createElement('option');
                 defaultOption.value = 'All';
                 defaultOption.textContent = 'All Countries';
                 countryFilter.appendChild(defaultOption);
 
-                // Populate dropdown with countries
                 countries.forEach(country => {
                     const option = document.createElement('option');
                     option.value = country;
@@ -300,7 +303,6 @@ async function populateCountryFilter() {
                     countryFilter.appendChild(option);
                 });
 
-                // Add event listener for filtering places
                 countryFilter.addEventListener('change', (event) => {
                     const selectedCountry = event.target.value;
                     filterPlacesByCountry(selectedCountry);
@@ -313,7 +315,6 @@ async function populateCountryFilter() {
         console.error('Error fetching countries:', error);
     }
 }
-
 
 function filterPlacesByCountry(country) {
     const placesList = document.getElementById('places-list');
@@ -339,16 +340,13 @@ function setupReviewForm(token) {
             const rating = document.getElementById('rating').value;
             const review = document.getElementById('review-text').value;
 
-            console.log('Rating:', rating); // Debugging
-            console.log('Review:', review); // Debugging
-
             try {
                 const response = await addReview(token, placeId, rating, review);
 
                 if (response.ok) {
                     alert('Review added successfully!');
-                    reviewForm.reset(); // Reset the form fields
-                    window.location.reload(); // Reload page to display the new review
+                    reviewForm.reset();
+                    window.location.reload();
                 } else {
                     const errorData = await response.json();
                     alert('Failed to add review: ' + (errorData.msg || response.statusText));
@@ -361,7 +359,7 @@ function setupReviewForm(token) {
     }
 }
 
-async function addReview(token, placeId, rating, review) { // Changed 'comment' to 'review'
+async function addReview(token, placeId, rating, review) {
     try {
         const response = await fetch(`http://127.0.0.1:5000/places/${placeId}/reviews`, {
             method: 'POST',
@@ -370,8 +368,8 @@ async function addReview(token, placeId, rating, review) { // Changed 'comment' 
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                rating,   
-                review    // Ensure 'review' key is used to match backend expectation
+                rating,
+                review
             })
         });
         return response;
@@ -383,5 +381,5 @@ async function addReview(token, placeId, rating, review) { // Changed 'comment' 
 
 function handleLogout() {
     document.cookie = 'token=; path=/; SameSite=None; Secure; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-    window.location.href = 'index.html'; // Rediriger vers la page d'accueil après la déconnexion
+    window.location.href = 'index.html'; // Redirect to the home page after logout
 }

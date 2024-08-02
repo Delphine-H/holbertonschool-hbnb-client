@@ -44,20 +44,22 @@
             <!-- review-button enable if user is not connected: -->
             <button id="review-button">Add review</button>
             <!-- review-form disable if user is not connected: -->
-            <form id="review-form">
-                <h2>Add a Review</h2>
-                <label for="review-text">Review:</label>
-                <textarea id="review-text" name="review-text" required></textarea>
-                <label for="rating">Rating:</label>
-                <select id="rating" name="rating" required>
-                    <option value="1">1 Star</option>
-                    <option value="2">2 Stars</option>
-                    <option value="3">3 Stars</option>
-                    <option value="4">4 Stars</option>
-                    <option value="5">5 Stars</option>
-                </select>
-                <button type="submit">Submit</button>
-            </form>
+            <div id="form">
+                <form id="review-form">
+                    <h2>Add a Review</h2>
+                    <label for="review-text">Review:</label>
+                    <textarea id="review-text" name="review-text" required></textarea>
+                    <label for="rating">Rating:</label>
+                    <select id="rating" name="rating" required>
+                        <option value="1">1 Star</option>
+                        <option value="2">2 Stars</option>
+                        <option value="3">3 Stars</option>
+                        <option value="4">4 Stars</option>
+                        <option value="5">5 Stars</option>
+                    </select>
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
         </section>
     </main>
     <footer>
