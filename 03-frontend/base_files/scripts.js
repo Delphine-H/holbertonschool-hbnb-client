@@ -123,13 +123,14 @@ function displayPlaceDetails(place) {
         placeDetailsSection.innerHTML = ''; // Clear existing content
         const placeCard = document.createElement('div');
         placeCard.className = 'place-card'; // Add class for styling
+        const placeImage = `images/${place.id}.jpeg`; // Path to the image
         placeCard.innerHTML = `
             <h2>${place.host_name} - ${place.city_name}, ${place.country_name}</h2>
             <p>${place.description}</p>
             <p><strong>Location:</strong> ${place.city_name}, ${place.country_name}</p>
             <p><strong>Price:</strong> $${place.price_per_night} per night</p>
             <div class="images">
-                ${place.images ? place.images.map(img => `<img src="${img}" alt="Place image">`).join('') : ''}
+                 <img src="${placeImage}" alt="Place image">
             </div>
             <div class="amenities">
                 <table>
@@ -255,8 +256,10 @@ function displayPlaces(places) {
         places.forEach(place => {
             const placeElement = document.createElement('div');
             placeElement.className = 'place-card';
+            const placeImage = `images/${place.id}.jpeg`; // Path to the image
             placeElement.innerHTML = `
                 <h3>${place.host_name} - ${place.city_name}, ${place.country_name}</h3>
+                <img src="${placeImage}" alt="Place image">
                 <p>${place.description}</p>
                 <p><strong>Price:</strong> $${place.price_per_night} per night</p>
                 <button class="details-button" data-id="${place.id}">View Details</button>
