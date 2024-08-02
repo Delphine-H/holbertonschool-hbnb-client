@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const token = getCookie('token');
-    
+
     if (document.getElementById('places-list')) {
         // Page with list of places
         checkAuthentication(token);
@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Page with details of a single place
         checkAuthentication(token);
         fetchPlaceDetails(token, getPlaceIdFromURL());
+        setupReviewForm(token);
     } else if (document.getElementById('login-form')) {
         // Page with login form
         handleLoginForm();
@@ -214,7 +215,6 @@ function displayPlaceDetails(place) {
     }
 }
 
-
 function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -294,11 +294,11 @@ async function populateCountryFilter() {
                 });
 
                 // Add event listener for filtering places
-                countryFilter.addEventListener('change', function() {
-                    const selectedCountry = countryFilter.value;
-                    fetchPlacesByCountry(selectedCountry);
+                countryFilter.addEventListener('change', (event) => {
+                    const selectedCountry = event.target.value;
+                    filterPlacesByCountry(selectedCountry);
                 });
-            }
+            }  
         } else {
             console.error('Failed to fetch countries:', response.statusText);
         }
@@ -307,22 +307,69 @@ async function populateCountryFilter() {
     }
 }
 
-async function fetchPlacesByCountry(country) {
-    try {
-        const response = await fetch(`http://127.0.0.1:5000/places?country=${country}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
+
+function filterPlacesByCountry(country) {
+    const placesList = document.getElementById('places-list');
+    const places = placesList.getElementsByClassName('place-card');
+
+    Array.from(places).forEach(place => {
+        const placeCountry = place.querySelector('h3').textContent.split(', ').pop();
+        if (country === 'All' || placeCountry === country) {
+            place.style.display = 'block';
+        } else {
+            place.style.display = 'none';
+        }
+    });
+}
+
+function setupReviewForm(token) {
+    const reviewForm = document.getElementById('review-form');
+    if (reviewForm) {
+        reviewForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const placeId = getPlaceIdFromURL();
+            const rating = document.getElementById('rating').value;
+            const review = document.getElementById('review-text').value;
+
+            console.log('Rating:', rating); // Debugging
+            console.log('Review:', review); // Debugging
+
+            try {
+                const response = await addReview(token, placeId, rating, review);
+
+                if (response.ok) {
+                    alert('Review added successfully!');
+                    reviewForm.reset(); // Reset the form fields
+                    window.location.reload(); // Reload page to display the new review
+                } else {
+                    const errorData = await response.json();
+                    alert('Failed to add review: ' + (errorData.msg || response.statusText));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while adding the review. Please try again.');
             }
         });
+    }
+}
 
-        if (response.ok) {
-            const places = await response.json();
-            displayPlaces(places);
-        } else {
-            console.error('Failed to fetch places by country:', response.statusText);
-        }
+async function addReview(token, placeId, rating, review) { // Changed 'comment' to 'review'
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/places/${placeId}/reviews`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                rating,   
+                review    // Ensure 'review' key is used to match backend expectation
+            })
+        });
+        return response;
     } catch (error) {
-        console.error('Error fetching places by country:', error);
+        console.error('Error adding review:', error);
+        throw error;
     }
 }
